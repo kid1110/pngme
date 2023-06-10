@@ -3,7 +3,7 @@ use std::fmt;
 use std::str::FromStr;
 use crate::{Error, Result};
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct ChunkType{
+pub struct ChunkType{
     data:u32,
 }
 
@@ -33,7 +33,7 @@ impl ChunkType{
         }
         true
     }
-    fn bytes(&self)->[u8;4]{
+    pub fn bytes(&self)->[u8;4]{
         u32::to_be_bytes(self.data)
     }
     
