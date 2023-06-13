@@ -3,8 +3,9 @@ use crc::{Crc, CRC_32_ISO_HDLC};
 use crate::chunk_type::ChunkType;
 use crate::{Error, Result};
 
+
 #[derive(Debug, Clone)]
-struct Chunk{
+pub struct Chunk{
     length: u32,
     chunk_type: ChunkType,
     chunk_data: Vec<u8>,
@@ -13,7 +14,7 @@ struct Chunk{
 //x^32+x^26+x^23+x^22+x^16+x^12+x^11+x^10+x^8+x^7+x^5+x^4+x^2+x+1
 //1_0000_0100_1100_0001_0001_1101_1011_0111 -> 04C11DB7
 impl Chunk {
-    fn new(chunk_type:ChunkType,chunk_data:Vec<u8>)->Chunk{
+    pub fn new(chunk_type:ChunkType,chunk_data:Vec<u8>)->Chunk{
         let length = chunk_data.len() as u32;
         let crce = Crc::<u32>::new(&CRC_32_ISO_HDLC);
         let  chain_data = ChunkType::bytes(&chunk_type);
@@ -27,14 +28,14 @@ impl Chunk {
     fn length(&self)->u32{
         self.length
     }
-    fn chunk_type(&self)->&ChunkType{
+    pub fn chunk_type(&self)->&ChunkType{
         &self.chunk_type
     }
     // fn data(&self)->&[u8]{}
     fn crc(&self)->u32{
         self.crc
     }
-    fn data_as_string(&self)->Result<String>{
+    pub fn data_as_string(&self)->Result<String>{
         let s:Result<String> = String::from_utf8(self.chunk_data.clone().into()).map_err(|e| Box::new(e) as Error);
         match s {
             Ok(s)=>Ok(s),
@@ -45,7 +46,7 @@ impl Chunk {
         &self.chunk_data.as_slice()
     }
     #[warn(dead_code)]
-    fn as_bytes(&self)->Vec<u8>{
+    pub fn as_bytes(&self)->Vec<u8>{
         self.length.to_be_bytes().iter().chain(self.chunk_type.bytes().iter()).chain(self.chunk_data.iter()).chain(self.crc.to_be_bytes().iter()).copied().collect()
     }
 }
@@ -55,7 +56,9 @@ impl TryFrom<&[u8]> for Chunk{
     type Error = Error;
     fn try_from(value: &[u8]) -> std::result::Result<Self, Self::Error> {
         //get chunk_length
-        let length = value[3] as u32;
+        let mut fixed_array: [u8; 4] = [0; 4];
+        fixed_array.copy_from_slice(&value[0..4]);
+        let length = u32::from_be_bytes(fixed_array);
         //get chunk_data
         let chunk_data = value[8..value.len()-4].to_vec();
         //get crc code from bytes
