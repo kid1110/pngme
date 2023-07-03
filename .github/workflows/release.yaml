@@ -8,6 +8,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./pngme
+        
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -17,9 +21,6 @@ jobs:
         with:
           toolchain: stable
           profile: minimal
-
-      - name: Change directory
-        run: cd pngme
 
       - name: Run tests
         run: cargo test
