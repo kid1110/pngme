@@ -45,6 +45,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/release/pngme  # 替换为你的实际应用程序路径
+          asset_path: ./pngme/target/release/pngme  # 替换为你的实际应用程序路径
           asset_name: pngme  # 替换为你的实际应用程序名称
           asset_content_type: application/octet-stream
