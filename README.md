@@ -28,5 +28,5 @@ cargo build --release
 ./target/release/pngme print ./test.png  
 ```
 # Tips
-All chunks in png file including hidden chunks you make would follow png 
+All chunks in png file including hidden chunks you make would follow png chunks rule.
 
