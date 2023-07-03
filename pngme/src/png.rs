@@ -7,7 +7,7 @@ use crate::chunk_type::ChunkType;
 use crate::{Error, Result};
 use std::path::Path;
 use std::fs::File;
-use std::io::{BufWriter, Read, Write, Seek, SeekFrom};
+use std::io::{Read, Write, Seek, SeekFrom};
 
 #[derive(Debug)]
 pub struct Png{
@@ -22,7 +22,7 @@ impl Png {
     pub fn from_file<P: AsRef<Path>>(path: P,chunk_type:&str,chunk_data:&str)->Result<()>{
         let mut file = File::open(path)?;
         let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer);
+        file.read_to_end(&mut buffer)?;
         println!("raw: {:?}",buffer);
         println!("----------------------");
         let mut res = Png::try_from(buffer.as_slice())?;
@@ -36,7 +36,7 @@ impl Png {
             Err(e)=>println!("write error {}",e),
             Ok(_ok)=>println!("write success")
         }
-        file.read_to_end(&mut buffer);
+        file.read_to_end(&mut buffer)?;
         println!("last: {:?}",buffer);
         println!("----------------------");
         Ok(())
@@ -46,11 +46,11 @@ impl Png {
     pub fn append_chunk(&mut self, chunk: Chunk){
         self.chunks.push(chunk)
     }
-    pub fn get_chunk<P:AsRef<Path>>(chunk_type: &str,path:P)->Result<(Chunk)>{
+    pub fn get_chunk<P:AsRef<Path>>(chunk_type: &str,path:P)->Result<Chunk>{
         let mut file = File::open(path)?;
         let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer);
-        let mut res = Png::try_from(buffer.as_slice())?;
+        file.read_to_end(&mut buffer)?;
+        let res = Png::try_from(buffer.as_slice())?;
         let chunk_type = ChunkType::from_str(chunk_type)?;
         for item in res.chunks.iter(){
             if item.chunk_type().bytes() == chunk_type.bytes(){
@@ -70,7 +70,7 @@ impl Png {
     pub fn remove_chunk<P:AsRef<Path>>(chunk_type: &str,path:P) -> Result<Chunk>{
         let mut file = File::open(&path)?;
         let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer);
+        file.read_to_end(&mut buffer)?;
         // file.seek(SeekFrom::Start(0))?;
         drop(file);
         println!("raw: {:?}",buffer);
@@ -167,7 +167,6 @@ mod tests {
     use super::*;
     use crate::chunk_type::ChunkType;
     use crate::chunk::Chunk;
-    use std::str::FromStr;
     use std::convert::TryFrom;
 
     fn testing_chunks() -> Vec<Chunk> {
@@ -187,7 +186,6 @@ mod tests {
     
 
     fn chunk_from_strings(chunk_type: &str, data: &str) -> Result<Chunk> {
-        use std::str::FromStr;
 
         let chunk_type = ChunkType::from_str(chunk_type)?;
         let data: Vec<u8> = data.bytes().collect();
@@ -298,7 +296,7 @@ mod tests {
         assert_eq!(&chunk.data_as_string().unwrap(), "Message");
     }
 
-    #[test]
+    // #[test]
     // fn test_remove_chunk() {
     //     let mut png = testing_png();
     //     png.append_chunk(chunk_from_strings("TeSt", "Message").unwrap());
@@ -318,7 +316,7 @@ mod tests {
         }
         assert!(png.is_ok());
     }
-    #[test]
+    // #[test]
     // fn test_png_right(){
     //     // 将二进制数据解码为图像
     // let image: DynamicImage = image::load_from_memory(&PNG_FILE[..])
