@@ -52,14 +52,24 @@ jobs:
           prerelease: false
 
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          name: Linux
-          path: ./pngme/target/x86_64-unknown-linux-gnu/release/pngme
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./pngme/target/x86_64-unknown-linux-gnu/release/pngme  # 替换为你的实际应用程序路径
+          asset_name: pngme-x86_64-linux  # 替换为你的实际应用程序名称
+          asset_content_type: application/octet-stream
 
-      - name: Upload Windows artifact
-        uses: actions/upload-artifact@v2
+       - name: Upload Windows artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          name: Windows
-          path: ./pngme/target/x86_64-pc-windows-gnu/release/pngme.exe
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./pngme/target/x86_64-pc-windows-gnu/release/pngme.exe  # 替换为你的实际应用程序路径
+          asset_name: pngme-x86_64-pc-windows-gnu.exe  # 替换为你的实际应用程序名称
+          asset_content_type: application/octet-stream
+
+      
 
