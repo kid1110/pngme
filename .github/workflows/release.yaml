@@ -6,10 +6,7 @@ on:
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
 
     defaults:
       run:
@@ -28,8 +25,12 @@ jobs:
       - name: Run tests
         run: cargo test
 
-      - name: Build release
-        run: cargo build --release
+      - name: Build releases
+        id: build_releases
+        run: |
+          cargo build --release --target x86_64-unknown-linux-gnu
+          cargo build --release --target x86_64-pc-windows-msvc
+          cargo build --release --target x86_64-apple-darwin
 
       - name: Create release
         id: create_release
@@ -37,17 +38,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag_name: Tag_${{ github.sha }}_${{ matrix.os }} 
-          release_name: Release_${{ github.sha }}_${{ matrix.os }} 
+          tag_name: Tag_${{ github.sha }}
+          release_name: Release_${{ github.sha }}
           draft: false
           prerelease: false
 
-      - name: Upload artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./pngme/target/release/pngme  # 替换为你的实际应用程序路径和文件名
-          asset_name: pngme-${{ matrix.os }}  # 替换为你的实际应用程序名称和文件名
-          asset_content_type: application/octet-stream
+          name: Linux
+          path: ./pngme/target/x86_64-unknown-linux-gnu/release/pngme
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows
+          path: ./pngme/target/x86_64-pc-windows-msvc/release/pngme.exe
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: macOS
+          path: ./pngme/target/x86_64-apple-darwin/release/pngme
