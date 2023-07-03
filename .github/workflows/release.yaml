@@ -37,8 +37,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag_name: Tag_${{ github.sha }}
-          release_name: Release_${{ github.sha }}
+          tag_name: Tag_${{ github.sha }}_${{ matrix.os }} 
+          release_name: Release_${{ github.sha }}_${{ matrix.os }} 
           draft: false
           prerelease: false
 
