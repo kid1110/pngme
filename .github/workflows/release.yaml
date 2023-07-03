@@ -48,6 +48,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./pngme/target/release/pngme-${{ matrix.os }}  # 替换为你的实际应用程序路径和文件名
+          asset_path: ./pngme/target/release/pngme  # 替换为你的实际应用程序路径和文件名
           asset_name: pngme-${{ matrix.os }}  # 替换为你的实际应用程序名称和文件名
           asset_content_type: application/octet-stream
