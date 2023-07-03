@@ -23,7 +23,7 @@ jobs:
           profile: minimal
 
       - name: Install target platform
-        run: rustup target add x86_64-pc-windows-msvc
+        run: rustup target add x86_64-pc-windows-gnu
 
       - name: Install target platform
         run: rustup target add x86_64-apple-darwin
@@ -35,7 +35,7 @@ jobs:
         id: build_releases
         run: |
           cargo build --release --target x86_64-unknown-linux-gnu
-          cargo build --release --target x86_64-pc-windows-msvc
+          cargo build --release --target x86_64-pc-windows-gnu
           cargo build --release --target x86_64-apple-darwin
 
       - name: Create release
@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Windows
-          path: ./pngme/target/x86_64-pc-windows-msvc/release/pngme.exe
+          path: ./pngme/target/x86_64-pc-windows-gnu/release/pngme.exe
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v2
