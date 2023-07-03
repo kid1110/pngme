@@ -61,7 +61,7 @@ jobs:
           asset_name: pngme-x86_64-linux  # 替换为你的实际应用程序名称
           asset_content_type: application/octet-stream
 
-       - name: Upload Windows artifact
+      - name: Upload Windows artifact
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
@@ -69,7 +69,7 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./pngme/target/x86_64-pc-windows-gnu/release/pngme.exe  # 替换为你的实际应用程序路径
           asset_name: pngme-x86_64-pc-windows-gnu.exe  # 替换为你的实际应用程序名称
-          asset_content_type: application/octet-stream
+          asset_content_type: application/octet-stream 
 
       
 
