@@ -16,7 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -32,17 +31,21 @@ jobs:
       - name: Install target platform
         run: rustup target add x86_64-apple-darwin
       
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc \
+            g++ \
+            clang \
+            llvm \
+            libssl-dev \
+            pkg-config \
+            libc6-dev \
+            ocl-icd-opencl-dev
+
       - name: Install mingw-w64
-        run: sudo apt-get update && sudo apt-get install -y mingw-w64 &&sudo apt-get update \
-              sudo apt-get install -y \
-                  gcc \
-                  g++ \
-                  clang \
-                  llvm \
-                  libssl-dev \
-                  pkg-config \
-                  libc6-dev \
-                  ocl-icd-opencl-dev
+        run: sudo apt-get install -y mingw-w64 
 
       - name: Run tests
         run: cargo test
@@ -52,7 +55,7 @@ jobs:
         run: |
           cargo build --release --target x86_64-unknown-linux-gnu
           cargo build --release --target x86_64-pc-windows-gnu
-          cargo build --release --target x86_64-apple-darwin
+          cargo build --release --target x86_64-apple-darwin-ubuntu
 
       - name: Create release
         id: create_release
@@ -81,4 +84,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: macOS
-          path: ./pngme/target/x86_64-apple-darwin/release/pngme
+          path: ./pngme/target/x86_64-apple-darwin-ubuntu/release/pngme
