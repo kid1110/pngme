@@ -6,7 +6,10 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     defaults:
       run:
@@ -34,8 +37,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag_name: Tag_${{ github.ref }}
-          release_name: Release_${{ github.ref }}
+          tag_name: Tag_${{ github.sha }}
+          release_name: Release_${{ github.sha }}
           draft: false
           prerelease: false
 
@@ -45,6 +48,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./pngme/target/release/pngme  # 替换为你的实际应用程序路径
-          asset_name: pngme  # 替换为你的实际应用程序名称
+          asset_path: ./pngme/target/release/pngme-${{ matrix.os }}  # 替换为你的实际应用程序路径和文件名
+          asset_name: pngme-${{ matrix.os }}  # 替换为你的实际应用程序名称和文件名
           asset_content_type: application/octet-stream
