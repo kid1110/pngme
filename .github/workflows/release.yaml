@@ -28,22 +28,6 @@ jobs:
       - name: Install target platform
         run: rustup target add x86_64-pc-windows-gnu
 
-      - name: Install target platform
-        run: rustup target add x86_64-apple-darwin
-      
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            gcc \
-            g++ \
-            clang \
-            llvm \
-            libssl-dev \
-            pkg-config \
-            libc6-dev \
-            ocl-icd-opencl-dev
-
       - name: Install mingw-w64
         run: sudo apt-get install -y mingw-w64 
 
@@ -55,7 +39,6 @@ jobs:
         run: |
           cargo build --release --target x86_64-unknown-linux-gnu
           cargo build --release --target x86_64-pc-windows-gnu
-          cargo build --release --target x86_64-apple-darwin
 
       - name: Create release
         id: create_release
@@ -80,8 +63,3 @@ jobs:
           name: Windows
           path: ./pngme/target/x86_64-pc-windows-gnu/release/pngme.exe
 
-      - name: Upload macOS artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: macOS
-          path: ./pngme/target/x86_64-apple-darwin/release/pngme
